@@ -1,0 +1,14 @@
+flowchart TD
+    A([Admin]) --> T["Call registerVoter(voterAddress)"]
+
+    T --> C1{Caller is admin?}
+    C1 -->|No| E1["REVERT: Auth: Caller is not admin"]
+    C1 -->|Yes| C2{Already registered?}
+    C2 -->|Yes| E2["REVERT: Auth: Voter already registered"]
+    C2 -->|No| S["Set registeredVoters[address] = true"]
+    S --> EV["Emit VoterRegistered"]
+
+    style A fill:#f0f7f0,stroke:#7aaa7a,color:#000000
+    style EV fill:#eef2fb,stroke:#8fa8d8,color:#000000
+    style E1 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E2 fill:#fdf0f0,stroke:#d49090,color:#000000

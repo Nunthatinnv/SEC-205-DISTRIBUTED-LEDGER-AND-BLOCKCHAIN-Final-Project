@@ -1,0 +1,34 @@
+flowchart TD
+    A([Admin]) --> T["Call finalizeEvent(eventId)"]
+
+    T --> C1{Caller is admin?}
+    C1 -->|No| E1["REVERT: Auth: Caller is not admin"]
+    C1 -->|Yes| C2{eventId valid?}
+    C2 -->|No| E2["REVERT: Data: Event does not exist"]
+    C2 -->|Yes| C3{block.timestamp > endTime?}
+    C3 -->|No| E3["REVERT: Phase: Election still ongoing"]
+    C3 -->|Yes| C4{Already finalized?}
+    C4 -->|Yes| E4["REVERT: Status: Already finalized"]
+    C4 -->|No| C5{proposalCount > 0?}
+    C5 -->|No| E5["REVERT: Data: No proposals in this event"]
+    C5 -->|Yes| P1["Pass 1: Find maxVotes\nacross all proposals"]
+    P1 --> C6{maxVotes > 0?}
+    C6 -->|No| E6["REVERT: Data: No votes were cast"]
+    C6 -->|Yes| P2["Pass 2: Collect all proposals\nwith voteCount == maxVotes"]
+    P2 --> C7{winners.length > 1?}
+    C7 -->|Yes| TIE["Set isTie = true"]
+    C7 -->|No| WIN["Set isTie = false"]
+    TIE --> S["Set finalized = true\nStore winningProposalIds"]
+    WIN --> S
+    S --> EV["Emit EventFinalized\nwinnerIds, isTie"]
+
+    style A fill:#f0f7f0,stroke:#7aaa7a,color:#000000
+    style EV fill:#eef2fb,stroke:#8fa8d8,color:#000000
+    style TIE fill:#fdfbee,stroke:#c8b860,color:#000000
+    style WIN fill:#fdfbee,stroke:#c8b860,color:#000000
+    style E1 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E2 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E3 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E4 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E5 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E6 fill:#fdf0f0,stroke:#d49090,color:#000000

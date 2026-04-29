@@ -1,0 +1,22 @@
+flowchart TD
+    A([Admin]) --> T1["Step 1: Call transferAdmin(newAddress)"]
+
+    T1 --> C1{Caller is admin?}
+    C1 -->|No| E1["REVERT: Auth: Caller is not admin"]
+    C1 -->|Yes| C2{newAddress != address zero?}
+    C2 -->|No| E2["REVERT: Auth: Invalid address"]
+    C2 -->|Yes| S1["Set pendingAdmin = newAddress"]
+    S1 --> EV1["Emit AdminTransferInitiated"]
+
+    EV1 --> T2["Step 2: newAddress calls acceptAdmin()"]
+    T2 --> C3{msg.sender == pendingAdmin?}
+    C3 -->|No| E3["REVERT: Auth: Caller is not pending admin"]
+    C3 -->|Yes| S2["Set admin = pendingAdmin\nSet pendingAdmin = address zero"]
+    S2 --> EV2["Emit AdminTransferred"]
+
+    style A fill:#f0f7f0,stroke:#7aaa7a,color:#000000
+    style EV1 fill:#eef2fb,stroke:#8fa8d8,color:#000000
+    style EV2 fill:#eef2fb,stroke:#8fa8d8,color:#000000
+    style E1 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E2 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E3 fill:#fdf0f0,stroke:#d49090,color:#000000

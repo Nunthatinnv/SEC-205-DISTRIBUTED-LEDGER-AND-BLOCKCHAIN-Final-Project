@@ -1,0 +1,5 @@
+.claude
+.states
+.DS_Store
+artifacts/
+*.docx

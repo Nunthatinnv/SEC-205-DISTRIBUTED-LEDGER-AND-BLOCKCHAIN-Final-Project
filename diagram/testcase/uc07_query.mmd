@@ -1,0 +1,13 @@
+flowchart TD
+    A([Public User]) --> C0{What to query?}
+
+    C0 -->|"getEvent(eventId)"| C1{eventId valid?}
+    C0 -->|"getProposal(eventId, proposalId)"| C1
+    C0 -->|"getWinners(eventId)"| C1
+
+    C1 -->|No| E1["REVERT: Data: Event does not exist"]
+    C1 -->|Yes| R["Return requested data\nNo state change\nZero gas cost"]
+
+    style A fill:#d1fae5,stroke:#059669,color:#000000
+    style R fill:#dbeafe,stroke:#2563eb,color:#000000
+    style E1 fill:#fee2e2,stroke:#dc2626,color:#000000

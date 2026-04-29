@@ -1,0 +1,19 @@
+flowchart LR
+    A["Admin"]
+    V["Registered Voter"]
+    P["Public User"]
+
+    subgraph EVM["Ethereum Network"]
+        VS["VotingSystem.sol"]
+        AC["AccessControl.sol"]
+        VL["VotingLib.sol"]
+    end
+
+    A -->|"Manage events, proposals, voters, finalize"| VS
+    V -->|"Cast vote"| VS
+    P -->|"Query results"| VS
+
+    VS -->|"inherits"| AC
+    VS -->|"uses"| VL
+
+    style EVM fill:#f0f4ff,stroke:#6366f1,color:#1e1b4b

@@ -1,0 +1,63 @@
+classDiagram
+    class AccessControl {
+        <<abstract>>
+        +address admin
+        +address pendingAdmin
+        +mapping registeredVoters
+        +transferAdmin(address _newAdmin)
+        +acceptAdmin()
+        +registerVoter(address _voter)
+        #onlyAdmin() modifier
+    }
+
+    class VotingSystem {
+        +uint256 totalEvents
+        +mapping events
+        +mapping eventProposals
+        +mapping hasVoted
+        +mapping winningProposalIds
+        +createEvent(string _title, uint256 _start, uint256 _end)
+        +addProposal(uint256 _eventId, string _title)
+        +getEvent(uint256 _eventId) view
+        +getProposal(uint256 _eventId, uint256 _proposalId) view
+        +getWinners(uint256 _eventId) view
+        +vote(uint256 _eventId, uint256 _proposalId)
+        +finalizeEvent(uint256 _eventId)
+        #validEvent(uint256 _eventId) modifier
+    }
+
+    class VotingLib {
+        <<library>>
+        +isActive(TimeBounds bounds) bool
+        +isValidId(uint256 id, uint256 count) bool
+    }
+
+    class VoteEvent {
+        <<struct>>
+        +uint256 eventId
+        +string title
+        +TimeBounds bounds
+        +uint256 proposalCount
+        +bool finalized
+        +bool isTie
+    }
+
+    class Proposal {
+        <<struct>>
+        +uint256 id
+        +string title
+        +uint256 voteCount
+    }
+
+    class TimeBounds {
+        <<struct>>
+        +uint256 startTime
+        +uint256 endTime
+    }
+
+    VotingSystem --|> AccessControl : inherits
+    VotingSystem ..> VotingLib : uses
+    VotingSystem "1" *-- "0..*" VoteEvent : events mapping
+    VotingSystem "1" *-- "0..*" Proposal : eventProposals mapping
+    VoteEvent *-- TimeBounds : bounds
+    VotingLib ..> TimeBounds : parameter

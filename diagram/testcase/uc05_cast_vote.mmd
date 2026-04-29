@@ -1,0 +1,23 @@
+flowchart TD
+    A([Registered Voter]) --> T["Call vote(eventId, proposalId)"]
+
+    T --> C1{eventId valid?}
+    C1 -->|No| E1["REVERT: Data: Event does not exist"]
+    C1 -->|Yes| C2{Caller is registered voter?}
+    C2 -->|No| E2["REVERT: Auth: Not a registered voter"]
+    C2 -->|Yes| C3{Event is active?\nstartTime <= now <= endTime}
+    C3 -->|No| E3["REVERT: Phase: Voting is not currently active"]
+    C3 -->|Yes| C4{Already voted in this event?}
+    C4 -->|Yes| E4["REVERT: Action: Already voted in this event"]
+    C4 -->|No| C5{proposalId valid?\n1 <= id <= proposalCount}
+    C5 -->|No| E5["REVERT: Data: Invalid proposal ID"]
+    C5 -->|Yes| S["Set hasVoted[eventId][caller] = true\nIncrement voteCount"]
+    S --> EV["Emit Voted"]
+
+    style A fill:#f0f7f0,stroke:#7aaa7a,color:#000000
+    style EV fill:#eef2fb,stroke:#8fa8d8,color:#000000
+    style E1 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E2 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E3 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E4 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E5 fill:#fdf0f0,stroke:#d49090,color:#000000

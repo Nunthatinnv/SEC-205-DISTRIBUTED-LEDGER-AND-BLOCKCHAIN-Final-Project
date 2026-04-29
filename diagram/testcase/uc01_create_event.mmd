@@ -1,0 +1,17 @@
+flowchart TD
+    A([Admin]) --> T["Call createEvent(title, start, end)"]
+
+    T --> C1{Caller is admin?}
+    C1 -->|No| E1["REVERT: Auth: Caller is not admin"]
+    C1 -->|Yes| C2{start > block.timestamp?}
+    C2 -->|No| E2["REVERT: Data: Start must be in the future"]
+    C2 -->|Yes| C3{end > start?}
+    C3 -->|No| E3["REVERT: Data: End must be after start"]
+    C3 -->|Yes| S["Increment totalEvents\nWrite VoteEvent to storage"]
+    S --> EV["Emit EventCreated"]
+
+    style A fill:#f0f7f0,stroke:#7aaa7a,color:#000000
+    style EV fill:#eef2fb,stroke:#8fa8d8,color:#000000
+    style E1 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E2 fill:#fdf0f0,stroke:#d49090,color:#000000
+    style E3 fill:#fdf0f0,stroke:#d49090,color:#000000
